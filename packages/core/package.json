@@ -1,0 +1,30 @@
+{
+  "name": "@auto-tracker/core",
+  "version": "1.0.0",
+  "description": "AutoTracker SDK核心模块",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && rollup -c",
+    "test": "jest"
+  },
+  "keywords": [
+    "analytics",
+    "tracking",
+    "monitoring"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@auto-tracker/utils": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

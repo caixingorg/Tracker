@@ -1,46 +1,57 @@
 {
   "name": "auto-tracker",
   "version": "1.0.0",
-  "description": "无埋点前端监控SDK",
+  "description": "AutoTracker SDK - 无埋点数据采集SDK",
+  "private": true,
+  "main": "auto-tracker.js",
+  "module": "auto-tracker.js",
   "type": "module",
-  "main": "dist/auto-tracker.cjs.js",
-  "module": "dist/auto-tracker.esm.js",
-  "browser": "dist/auto-tracker.umd.js",
-  "types": "dist/types/index.d.ts",
-  "files": [
-    "dist",
-    "src"
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "dev": "rollup -c -w",
-    "build": "rimraf dist && NODE_ENV=production rollup -c",
-    "lint": "eslint src --ext .js",
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean",
+    "build": "node build.js",
+    "build:prod": "cross-env NODE_ENV=production node build.js",
+    "build:packages": "lerna run build",
     "test": "jest",
-    "docs": "jsdoc -c jsdoc.json"
+    "lint": "eslint packages/*/src/**/*.js",
+    "format": "prettier --write \"packages/*/src/**/*.js\"",
+    "publish": "lerna publish",
+    "clean:legacy": "node cleanup.js"
   },
   "keywords": [
     "analytics",
     "tracking",
-    "monitoring",
     "performance",
-    "error-tracking"
+    "error-monitoring",
+    "auto-tracking"
   ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.23.5",
-    "@babel/preset-env": "^7.23.5",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.55.0",
-    "jest": "^29.7.0",
-    "jsdoc": "^4.0.2",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.6.1",
-    "rollup-plugin-dts": "^6.1.0",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-terser": "^0.4.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.6",
+    "lerna": "^4.0.0",
+    "prettier": "^2.3.2",
+    "rimraf": "^5.0.0",
+    "rollup": "^2.56.2",
+    "rollup-plugin-dts": "^4.0.0",
     "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^2.0.2"
+    "rollup-plugin-serve": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "name": "@auto-tracker/utils",
+  "version": "1.0.0",
+  "description": "AutoTracker SDK 共享工具函数",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && rollup -c",
+    "test": "jest"
+  },
+  "keywords": [
+    "analytics",
+    "tracking",
+    "monitoring",
+    "utils"
+  ],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

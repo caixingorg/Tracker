@@ -145,6 +145,29 @@
   </div>
   
   <div class="section">
+    <h2>热图 & 会话指标</h2>
+    <div class="card">
+      <p>热图和会话指标功能:</p>
+      <button id="btn-heatmap-start">开始热图记录</button>
+      <button id="btn-heatmap-stop">停止热图记录</button>
+      <button id="btn-heatmap-data">获取热图数据</button>
+      <button id="btn-session-data">获取会话指标</button>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>转化漏斗</h2>
+    <div class="card">
+      <p>漏斗跟踪功能:</p>
+      <button id="btn-funnel-create">创建漏斗</button>
+      <button id="btn-funnel-step1">进入步骤1</button>
+      <button id="btn-funnel-step2">进入步骤2</button>
+      <button id="btn-funnel-step3">进入步骤3</button>
+      <button id="btn-funnel-data">获取漏斗数据</button>
+    </div>
+  </div>
+  
+  <div class="section">
     <h2>Console Output</h2>
     <div class="console" id="console">
       <!-- Console entries will be added here -->
@@ -152,11 +175,10 @@
   </div>
   
   <!-- Import AutoTracker SDK -->
-  <script type="module">
-    import autoTracker, { AutoTracker } from './index.js';
-    
+  <script src="dist/auto-tracker-web.js"></script>
+  <script>
     // Initialize with custom config
-    autoTracker.init({
+    const autoTracker = AutoTracker.init({
       appId: 'example-app',
       debug: true,
       beacon: {
@@ -314,8 +336,76 @@
       console.log(`Heavy resource loaded in ${duration.toFixed(2)}ms, sum: ${sum}`);
     });
     
+    // 热图功能
+    document.getElementById('btn-heatmap-start').addEventListener('click', () => {
+      autoTracker.startHeatmapRecording();
+      console.log('热图记录已开始');
+    });
+    
+    document.getElementById('btn-heatmap-stop').addEventListener('click', () => {
+      autoTracker.stopHeatmapRecording();
+      console.log('热图记录已停止');
+    });
+    
+    document.getElementById('btn-heatmap-data').addEventListener('click', () => {
+      const heatmapData = autoTracker.getHeatmapData();
+      console.log('热图数据:', heatmapData);
+    });
+    
+    document.getElementById('btn-session-data').addEventListener('click', () => {
+      const sessionId = autoTracker.getSessionId();
+      const sessionDuration = autoTracker.getSessionDuration();
+      const bounceRate = autoTracker.getBounceRate();
+      
+      console.log('会话指标:', {
+        sessionId,
+        sessionDuration: `${(sessionDuration / 1000).toFixed(2)}秒`,
+        bounceRate: `${(bounceRate * 100).toFixed(2)}%`
+      });
+    });
+    
+    // 漏斗功能
+    let testFunnelId = 'test_funnel';
+    let testUserId = 'user_' + Math.floor(Math.random() * 1000000);
+    
+    document.getElementById('btn-funnel-create').addEventListener('click', () => {
+      // 创建测试漏斗
+      autoTracker.createFunnel(testFunnelId, '测试漏斗', [
+        { id: 'step1', name: '步骤1' },
+        { id: 'step2', name: '步骤2' },
+        { id: 'step3', name: '步骤3' }
+      ]);
+      
+      console.log(`漏斗已创建: ${testFunnelId}, 用户ID: ${testUserId}`);
+    });
+    
+    document.getElementById('btn-funnel-step1').addEventListener('click', () => {
+      autoTracker.enterFunnelStep(testFunnelId, 'step1', testUserId, { timestamp: Date.now() });
+      console.log(`用户 ${testUserId} 进入漏斗步骤1`);
+    });
+    
+    document.getElementById('btn-funnel-step2').addEventListener('click', () => {
+      autoTracker.enterFunnelStep(testFunnelId, 'step2', testUserId, { timestamp: Date.now() });
+      console.log(`用户 ${testUserId} 进入漏斗步骤2`);
+    });
+    
+    document.getElementById('btn-funnel-step3').addEventListener('click', () => {
+      autoTracker.enterFunnelStep(testFunnelId, 'step3', testUserId, { timestamp: Date.now() });
+      console.log(`用户 ${testUserId} 进入漏斗步骤3`);
+    });
+    
+    document.getElementById('btn-funnel-data').addEventListener('click', () => {
+      const funnelData = autoTracker.getFunnelData(testFunnelId);
+      console.log('漏斗数据:', funnelData);
+      
+      if (funnelData) {
+        const conversionRate = autoTracker.getConversionRate(testFunnelId);
+        console.log(`漏斗转化率: ${(conversionRate * 100).toFixed(2)}%`);
+      }
+    });
+    
     // Log initialization
-    console.log('AutoTracker SDK Example initialized');
+    console.log('AutoTracker SDK Example initialized with enhanced features');
   </script>
 </body>
 </html>

@@ -1,0 +1,32 @@
+{
+  "name": "@auto-tracker/wechat",
+  "version": "1.0.0",
+  "description": "AutoTracker SDK 微信小程序平台适配器",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && rollup -c",
+    "test": "jest"
+  },
+  "keywords": [
+    "analytics",
+    "tracking",
+    "monitoring",
+    "wechat",
+    "miniprogram"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@auto-tracker/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
