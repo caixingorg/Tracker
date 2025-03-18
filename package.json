@@ -1,0 +1,46 @@
+{
+  "name": "auto-tracker",
+  "version": "1.0.0",
+  "description": "无埋点前端监控SDK",
+  "type": "module",
+  "main": "dist/auto-tracker.cjs.js",
+  "module": "dist/auto-tracker.esm.js",
+  "browser": "dist/auto-tracker.umd.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rimraf dist && NODE_ENV=production rollup -c",
+    "lint": "eslint src --ext .js",
+    "test": "jest",
+    "docs": "jsdoc -c jsdoc.json"
+  },
+  "keywords": [
+    "analytics",
+    "tracking",
+    "monitoring",
+    "performance",
+    "error-tracking"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.2",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.6.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-serve": "^2.0.2"
+  }
+}

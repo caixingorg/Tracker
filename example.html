@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoTracker SDK Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    .error-trigger {
+      background-color: #f44336;
+    }
+    
+    .error-trigger:hover {
+      background-color: #d32f2f;
+    }
+    
+    .console {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: monospace;
+      height: 200px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .console-entry {
+      margin-bottom: 5px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    
+    .timestamp {
+      color: #999;
+      font-size: 0.8em;
+    }
+  </style>
+</head>
+<body>
+  <h1>AutoTracker SDK Example</h1>
+  
+  <div class="section">
+    <h2>Basic Events</h2>
+    <div class="card">
+      <p>Click the buttons below to trigger events:</p>
+      <button id="btn-click">Click Event</button>
+      <button id="btn-custom">Custom Event</button>
+      <button id="btn-user-id">Set User ID</button>
+      <button id="btn-user-props">Set User Properties</button>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Form Interaction</h2>
+    <div class="card">
+      <form id="test-form">
+        <div>
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" placeholder="Your name">
+        </div>
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="Your email">
+        </div>
+        <div>
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" placeholder="Your message"></textarea>
+        </div>
+        <button type="submit">Submit Form</button>
+      </form>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Error Monitoring</h2>
+    <div class="card">
+      <p>Trigger different types of errors:</p>
+      <button class="error-trigger" id="btn-js-error">JavaScript Error</button>
+      <button class="error-trigger" id="btn-promise-error">Promise Error</button>
+      <button class="error-trigger" id="btn-resource-error">Resource Error</button>
+      <button class="error-trigger" id="btn-ajax-error">AJAX Error</button>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Performance Monitoring</h2>
+    <div class="card">
+      <p>Trigger performance measurements:</p>
+      <button id="btn-perf-custom">Custom Performance Metric</button>
+      <button id="btn-perf-resource">Load Heavy Resource</button>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Console Output</h2>
+    <div class="console" id="console">
+      <!-- Console entries will be added here -->
+    </div>
+  </div>
+  
+  <!-- Import AutoTracker SDK -->
+  <script type="module">
+    import autoTracker, { AutoTracker } from './index.js';
+    
+    // Initialize with custom config
+    autoTracker.init({
+      appId: 'example-app',
+      debug: true,
+      beacon: {
+        url: 'https://analytics.example.com/collect', // Replace with your endpoint
+        batchSize: 3, // Small batch size for demo purposes
+        delay: 3000 // Short delay for demo purposes
+      }
+    });
+    
+    // Console logging
+    const consoleEl = document.getElementById('console');
+    const originalConsoleLog = console.log;
+    
+    console.log = function(...args) {
+      originalConsoleLog.apply(console, args);
+      
+      // Add to our custom console
+      const entry = document.createElement('div');
+      entry.className = 'console-entry';
+      
+      const timestamp = document.createElement('span');
+      timestamp.className = 'timestamp';
+      timestamp.textContent = new Date().toLocaleTimeString() + ': ';
+      entry.appendChild(timestamp);
+      
+      const content = document.createElement('span');
+      content.textContent = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+      ).join(' ');
+      entry.appendChild(content);
+      
+      consoleEl.appendChild(entry);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    };
+    
+    // Basic Events
+    document.getElementById('btn-click').addEventListener('click', () => {
+      console.log('Click event triggered (this is automatically tracked)');
+    });
+    
+    document.getElementById('btn-custom').addEventListener('click', () => {
+      autoTracker.trackEvent('custom_button_click', {
+        buttonId: 'btn-custom',
+        timestamp: Date.now()
+      });
+      console.log('Custom event tracked');
+    });
+    
+    document.getElementById('btn-user-id').addEventListener('click', () => {
+      const userId = 'user_' + Math.floor(Math.random() * 1000000);
+      autoTracker.setUserId(userId);
+      console.log('User ID set:', userId);
+    });
+    
+    document.getElementById('btn-user-props').addEventListener('click', () => {
+      const properties = {
+        plan: 'premium',
+        loginCount: Math.floor(Math.random() * 100),
+        lastLogin: new Date().toISOString()
+      };
+      autoTracker.setUserProperties(properties);
+      console.log('User properties set:', properties);
+    });
+    
+    // Form Interaction
+    document.getElementById('test-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log('Form submitted (this is automatically tracked)');
+      
+      // Clear form
+      e.target.reset();
+    });
+    
+    // Error Monitoring
+    document.getElementById('btn-js-error').addEventListener('click', () => {
+      try {
+        // Generate a JavaScript error
+        const obj = null;
+        obj.nonExistentMethod();
+      } catch (error) {
+        console.log('JavaScript error triggered');
+        // The error will be automatically tracked by the error monitor
+      }
+    });
+    
+    document.getElementById('btn-promise-error').addEventListener('click', () => {
+      // Generate an unhandled promise rejection
+      new Promise((resolve, reject) => {
+        reject(new Error('Example Promise Error'));
+      });
+      console.log('Promise error triggered');
+    });
+    
+    document.getElementById('btn-resource-error').addEventListener('click', () => {
+      // Generate a resource loading error
+      const img = document.createElement('img');
+      img.src = 'non-existent-image.jpg';
+      document.body.appendChild(img);
+      
+      // Remove the image after a short delay
+      setTimeout(() => {
+        document.body.removeChild(img);
+      }, 1000);
+      
+      console.log('Resource error triggered');
+    });
+    
+    document.getElementById('btn-ajax-error').addEventListener('click', () => {
+      // Generate an AJAX error
+      fetch('https://non-existent-domain-12345.com')
+        .catch(error => {
+          console.log('AJAX error triggered');
+        });
+    });
+    
+    // Performance Monitoring
+    document.getElementById('btn-perf-custom').addEventListener('click', () => {
+      // Track a custom performance metric
+      const startTime = performance.now();
+      
+      // Simulate some work
+      let result = 0;
+      for (let i = 0; i < 1000000; i++) {
+        result += Math.sqrt(i);
+      }
+      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+      
+      autoTracker.trackPerformance('custom_calculation', {
+        duration,
+        iterations: 1000000,
+        result
+      });
+      
+      console.log('Custom performance metric tracked:', duration.toFixed(2) + 'ms');
+    });
+    
+    document.getElementById('btn-perf-resource').addEventListener('click', () => {
+      // Load a heavy resource
+      console.log('Loading heavy resource...');
+      
+      const startTime = performance.now();
+      
+      // Create a large array and perform operations on it
+      const size = 10000000;
+      const array = new Array(size).fill(0).map((_, i) => i);
+      
+      // Perform some operations
+      const sum = array.reduce((acc, val) => acc + val, 0);
+      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+      
+      console.log(`Heavy resource loaded in ${duration.toFixed(2)}ms, sum: ${sum}`);
+    });
+    
+    // Log initialization
+    console.log('AutoTracker SDK Example initialized');
+  </script>
+</body>
+</html>
