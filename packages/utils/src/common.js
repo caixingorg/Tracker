@@ -110,10 +110,28 @@ export function safeGet(obj, path, defaultValue = undefined) {
 }
 
 /**
- * 脱敏处理敏感信息
- * @param {String} text - 原始文本
- * @param {Boolean} isEmail - 是否为邮箱
- * @return {String} 脱敏后的文本
+ * 脱敏处理敏感信息。
+ * 此函数可用于处理如邮箱、手机号、身份证号等常见类型的敏感文本。
+ * @param {String} text - 原始文本。
+ * @param {Boolean} [isEmail=false] - 是否强制按邮箱格式进行脱敏。如果为 `true`，则按邮箱规则处理；
+ *                                  如果为 `false` (默认)，函数会尝试自动检测是否为邮箱格式。
+ * @return {String} 脱敏后的文本。如果输入为 `null` 或空字符串，则原样返回。
+ * @example
+ * // 邮箱
+ * maskSensitiveData("test@example.com"); // "te**@example.com"
+ * maskSensitiveData("user@example.com", true); // "us**@example.com"
+ * // 手机号
+ * maskSensitiveData("13812345678"); // "138****5678"
+ * // 身份证号
+ * maskSensitiveData("320123199001011234"); // "3201**********1234"
+ * // 普通文本
+ * maskSensitiveData("HelloWorld"); // "He******ld"
+ * 
+ * @description
+ * 使用场景提示：
+ * 当通过 `trackEvent` 上报自定义事件数据时，如果 `eventData` 中可能包含用户自由输入的内容
+ * (例如：评论、搜索词、表单字段等)，建议开发者主动对此类数据进行审查，并考虑使用此函数
+ * 或自定义的脱敏方法，以避免意外上报个人身份信息 (PII) 或其他敏感内容。
  */
 export function maskSensitiveData(text, isEmail = false) {
   if (!text) return text;

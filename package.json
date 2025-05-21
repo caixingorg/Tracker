@@ -15,7 +15,7 @@
     "build": "node build.js",
     "build:prod": "cross-env NODE_ENV=production node build.js",
     "build:packages": "lerna run build",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint packages/*/src/**/*.js",
     "format": "prettier --write \"packages/*/src/**/*.js\"",
     "publish": "lerna publish",

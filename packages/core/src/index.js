@@ -58,9 +58,34 @@ function init(userConfig = {}) {
 }
 
 /**
- * 手动上报事件
- * @param {String} eventName - 事件名称
- * @param {Object} eventData - 事件数据
+ * 手动上报自定义事件。
+ * 允许开发者跟踪应用中特定的用户行为或状态。
+ *
+ * @param {string} eventName - 事件名称。应具有描述性，例如 'user_login', 'add_to_cart', 'submit_form'。
+ * @param {object} [eventData={}] - 事件相关的附加数据。可以是一个包含任意键值对的对象，用于提供事件的上下文信息。
+ * @returns {void}
+ *
+ * @description
+ * **数据隐私与安全提示:**
+ * `eventData` 对象可以包含任何自定义数据。请确保在传递用户产生的内容或任何可能包含
+ * 个人身份信息 (PII) 或其他敏感数据之前，对其进行适当的审查和脱敏处理。
+ * 例如，可以使用 SDK 提供的 `AutoTracker.utils.maskSensitiveData` 函数 (如果已暴露)
+ * 或您自定义的脱敏方案来处理用户输入、备注、消息等字段。
+ *
+ * @example
+ * // 上报用户搜索行为，对搜索词进行脱敏处理
+ * const searchTerm = getUserInputSearchTerm(); // 假设此函数获取用户输入的搜索词
+ * const maskedSearchTerm = AutoTracker.utils.maskSensitiveData ? AutoTracker.utils.maskSensitiveData(searchTerm) : searchTerm; // 假设 maskSensitiveData 可用
+ * AutoTracker.trackEvent('user_search', {
+ *   query: maskedSearchTerm,
+ *   results_count: 25
+ * });
+ *
+ * // 上报不含敏感信息的事件
+ * AutoTracker.trackEvent('video_played', {
+ *   videoId: 'vid123',
+ *   duration_watched: 300 // in seconds
+ * });
  */
 function trackEvent(eventName, eventData = {}) {
   const beaconSender = createBeaconSender(config.get());
