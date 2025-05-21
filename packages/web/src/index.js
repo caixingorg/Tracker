@@ -3,6 +3,10 @@
  */
 
 import { Platform } from '@auto-tracker/utils';
+import { 
+  setUserId as coreSetUserId, 
+  setUserProperties as coreSetUserProperties 
+} from '@auto-tracker/core/src/index.js';
 import { initEventTracker } from './eventTracker.js';
 import { initPerformance } from './performance.js';
 import { initErrorMonitor } from './errorMonitor.js';
@@ -70,19 +74,24 @@ function init(config, beaconSender) {
     
     // 用户相关方法
     setUserId: (userId) => {
-      config.userId = userId;
-      if (config.debug) {
-        console.log(`[AutoTracker] User ID set: ${userId}`);
+      // Call the core function to update the shared config
+      coreSetUserId(userId); 
+      if (config.debug) { // config here is the one passed to web adapter's init
+        console.log(`[AutoTracker] Web User ID set: ${userId}`);
       }
-      return userId;
+      // Return the userId as before, though the source of truth is now the core config
+      return userId; 
     },
     
     setUserProperties: (properties) => {
-      config.userProperties = { ...config.userProperties, ...properties };
-      if (config.debug) {
-        console.log('[AutoTracker] User properties set:', properties);
+      // Call the core function to update the shared config
+      coreSetUserProperties(properties);
+      if (config.debug) { // config here is the one passed to web adapter's init
+        console.log('[AutoTracker] Web User properties set:', properties);
       }
-      return config.userProperties;
+      // Return the properties from the local config, which should reflect the update
+      // if the config object is shared or coreSetUserProperties updates it.
+      return config.userProperties; 
     },
     
     // 事件跟踪方法

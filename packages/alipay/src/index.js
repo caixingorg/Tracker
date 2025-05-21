@@ -3,6 +3,7 @@
  */
 
 import { Platform } from '@auto-tracker/utils';
+import { initMiniProgramAdapter } from '@auto-tracker/utils/src/miniProgramAdapterUtils.js'; // Adjusted path
 import { initEventTracker } from './eventTracker.js';
 import { initPerformance } from './performance.js';
 import { initErrorMonitor } from './errorMonitor.js';
@@ -15,39 +16,25 @@ import { initPageLifecycle } from './pageLifecycle.js';
  * @param {Object} beaconSender - 数据上报实例
  */
 function init(config, beaconSender) {
-  // 检查是否在支付宝小程序环境
-  if (typeof my === 'undefined' || !my.getSystemInfo) {
-    console.error('[AutoTracker] Not in Alipay Mini Program environment');
-    return;
-  }
-  
-  // 初始化事件跟踪
-  initEventTracker(config, beaconSender);
-  
-  // 初始化性能监控
-  initPerformance(config, beaconSender);
-  
-  // 初始化错误监控
-  initErrorMonitor(config, beaconSender);
-  
-  // 初始化应用生命周期跟踪
-  if (config.miniProgram.common.trackAppLifecycle) {
-    initAppLifecycle(config, beaconSender);
-  }
-  
-  // 初始化页面生命周期跟踪
-  if (config.miniProgram.common.trackPageTransition) {
-    initPageLifecycle(config, beaconSender);
-  }
-  
-  if (config.debug) {
-    console.log('[AutoTracker] Alipay Mini Program adapter initialized');
-  }
-  
-  return {
-    platform: Platform.ALIPAY,
-    config
+  const platformTrackers = {
+    initEventTracker,
+    initPerformance,
+    initErrorMonitor,
+    initAppLifecycle,
+    initPageLifecycle
   };
+
+  // Ensure 'my' is globally available for Alipay
+  const platformAPI = typeof my !== 'undefined' ? my : undefined;
+
+  return initMiniProgramAdapter(
+    'Alipay',
+    platformAPI,
+    Platform.ALIPAY,
+    config,
+    beaconSender,
+    platformTrackers
+  );
 }
 
 export default {
